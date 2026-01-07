@@ -11,7 +11,8 @@ public class Heap
     public final boolean lazyMelds;
     public final boolean lazyDecreaseKeys;
     public HeapItem min;
-    
+    public HeapNode start;
+    public int sz;
     /**
      *
      * Constructor to initialize an empty heap.
@@ -31,19 +32,54 @@ public class Heap
      * Insert (key,info) into the heap and return the newly generated HeapNode.
      *
      */
-    public HeapItem insert(int key, String info) 
-    {    
-        return null; // should be replaced by student code
+
+    public HeapItem insert(int key, String info) { 
+        Heap heap2 = new Heap(lazyMelds, lazyDecreaseKeys);
+        HeapItem start2item = new HeapItem(key,info);
+        HeapNode start2 =  new HeapNode(start2item , null, null, null, null, 0);
+        heap2.start = start2;
+        heap2.min = start2item;
+        meld(heap2);
+        return start2item;
     }
 
+    public HeapNode Link(HeapNode a,HeapNode b){
+        if(b.item.key > a.item.key){
+            HeapNode c = a;
+            a=b;
+            b =c;
+        } 
+        a.rank = a.rank+1;
+        b.next  = a.child;
+        b.prev = null;
+        a.child = b;
+        b.parent = a;
+        return a;
+    }
     /**
      * 
      * Return the minimal HeapNode, null if empty.
      *
      */
+    public void SuccessiveLinking(Heap Heap1){
+        int maxrank = 2*(int)Math.log(sz);
+        HeapNode[] split =  new HeapNode[maxrank];
+        HeapNode now = start;
+        while(now != null){
+            int i = now.rank;
+            HeapNode nowgo =  now;
+            while(split[i] != null){
+                nowgo = Link(split[i],nowgo);
+                split[i] =  null;
+                i++;
+            }
+            split[i] = nowgo;
+            now = now.next;
+        }
+    }  
     public HeapItem findMin()
     {
-        return null; // should be replaced by student code
+        return min; // should be replaced by student code
     }
 
     /**
@@ -168,6 +204,15 @@ public class Heap
         public HeapNode prev;
         public HeapNode parent;
         public int rank;
+        public HeapNode(HeapItem item,HeapNode child,HeapNode next,HeapNode prev,HeapNode parent,int rank){
+            this.item = item;
+            this.child = child;
+            this.next = next;
+            this.prev = prev;
+            this.parent = parent;
+            this.rank = rank;
+            this.item.node = this;
+        }
     }
     
     /**
@@ -178,5 +223,9 @@ public class Heap
         public HeapNode node;
         public int key;
         public String info;
+        public HeapItem(int key,String info){
+            this.key = key;
+            this.info = info;
+        }
     }
 }
