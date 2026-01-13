@@ -44,7 +44,7 @@ public class Heap
     }
 
     public HeapNode Link(HeapNode a,HeapNode b){
-        if(b.item.key > a.item.key){
+        if(b.item.key < a.item.key){
             HeapNode c = a;
             a=b;
             b =c;
@@ -75,6 +75,23 @@ public class Heap
             }
             split[i] = nowgo;
             now = now.next;
+        }
+        HeapNode lastHeapnode = null;
+        for(int i=0;i<maxrank;i++){
+            if(split[i] != null){
+              if(lastHeapnode  == null){
+                    start = split[i];
+                    start.prev = null;
+                    start.next = null;
+                    lastHeapnode = start;
+              }
+              else{
+                lastHeapnode.next = split[i];
+                split[i].prev = lastHeapnode;
+                split[i].next = null;
+                lastHeapnode = split[i];
+              }
+            }
         }
     }  
     public HeapItem findMin()
