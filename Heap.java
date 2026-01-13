@@ -13,6 +13,8 @@ public class Heap
     public HeapItem min;
     public HeapNode start;
     public int sz;
+    public int szT;
+    public HeapNode last;
     /**
      *
      * Constructor to initialize an empty heap.
@@ -61,7 +63,7 @@ public class Heap
      * Return the minimal HeapNode, null if empty.
      *
      */
-    public void SuccessiveLinking(Heap Heap1){
+    public void SuccessiveLinking(){
         int maxrank = 2*(int)Math.log(sz);
         HeapNode[] split =  new HeapNode[maxrank];
         HeapNode now = start;
@@ -77,22 +79,25 @@ public class Heap
             now = now.next;
         }
         HeapNode lastHeapnode = null;
+        szT=0;
         for(int i=0;i<maxrank;i++){
             if(split[i] != null){
-              if(lastHeapnode  == null){
-                    start = split[i];
-                    start.prev = null;
-                    start.next = null;
-                    lastHeapnode = start;
-              }
-              else{
-                lastHeapnode.next = split[i];
-                split[i].prev = lastHeapnode;
-                split[i].next = null;
-                lastHeapnode = split[i];
-              }
+                szT++;
+                if(lastHeapnode  == null){
+                        start = split[i];
+                        start.prev = null;
+                        start.next = null;
+                        lastHeapnode = start;
+                }
+                else{
+                    lastHeapnode.next = split[i];
+                    split[i].prev = lastHeapnode;
+                    split[i].next = null;
+                    lastHeapnode = split[i];
+                }
             }
         }
+        last = lastHeapnode;
     }  
     public HeapItem findMin()
     {
@@ -140,7 +145,20 @@ public class Heap
      */
     public void meld(Heap heap2)
     {
-        return; // should be replaced by student code           
+        if(heap2 == null){
+            if(lazyMelds == false){
+                SuccessiveLinking();
+            }
+            return;
+        }
+        szT += heap2.szT;
+        sz += heap2.sz;
+        this.last.next = heap2.start;  
+        heap2.start.prev = this.last;  
+        this.last = heap2.last;
+        if(lazyMelds == false){
+            SuccessiveLinking();
+        }
     }
     
     
@@ -151,7 +169,7 @@ public class Heap
      */
     public int size()
     {
-        return 46; // should be replaced by student code
+        return sz; // should be replaced by student code
     }
 
 
@@ -162,7 +180,7 @@ public class Heap
      */
     public int numTrees()
     {
-        return 46; // should be replaced by student code
+        return szT; // should be replaced by student code
     }
     
     
