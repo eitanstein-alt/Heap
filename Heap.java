@@ -40,7 +40,10 @@ public class Heap
         HeapItem start2item = new HeapItem(key,info);
         HeapNode start2 =  new HeapNode(start2item , null, null, null, null, 0);
         heap2.start = start2;
+        heap2.last = start2;
         heap2.min = start2item;
+        heap2.sz = 1;
+        heap2.szT =1;
         meld(heap2);
         return start2item;
     }
@@ -64,7 +67,7 @@ public class Heap
      *
      */
     public void SuccessiveLinking(){
-        int maxrank = 2*(int)Math.log(sz);
+        int maxrank = 2*(int)Math.log(sz) +10;
         HeapNode[] split =  new HeapNode[maxrank];
         HeapNode now = start;
         while(now != null){
@@ -80,8 +83,12 @@ public class Heap
         }
         HeapNode lastHeapnode = null;
         szT=0;
+        HeapItem a = new HeapItem(Integer.MAX_VALUE, null);
         for(int i=0;i<maxrank;i++){
             if(split[i] != null){
+                if(a.key > split[i].item.key){
+                    a.key  = split[i].item.key;
+                }
                 szT++;
                 if(lastHeapnode  == null){
                         start = split[i];
@@ -98,6 +105,7 @@ public class Heap
             }
         }
         last = lastHeapnode;
+        min = a;
     }  
     public HeapItem findMin()
     {
@@ -111,7 +119,29 @@ public class Heap
      */
     public void deleteMin()
     {
-        return; // should be replaced by student code
+        HeapNode minnode = min.node;
+        HeapNode child =  minnode.child;
+        if(minnode.child != null){
+            minnode.child.parent  =  null;
+        }
+        if(minnode.next != null){
+            minnode.next.prev = minnode.prev;
+        }
+        if(minnode.prev != null){
+            minnode.prev.next = minnode.next;
+        }
+        HeapNode child2 = child;
+        while(child2 != null){
+            if(child2.next == null){
+                break;
+            }
+            child2 = child2.next;
+        }
+        sz -=1;
+        child.prev = this.last; 
+        this.last.next = child;
+        this.last = child2;
+        SuccessiveLinking();
     }
 
     /**
@@ -145,17 +175,34 @@ public class Heap
      */
     public void meld(Heap heap2)
     {
-        if(heap2 == null){
+        if(heap2.sz  == 0){
             if(lazyMelds == false){
                 SuccessiveLinking();
             }
             return;
         }
+        if(sz ==0 ){
+            min= heap2.min;
+            start = heap2.start;
+            sz = heap2.sz;
+            szT = heap2.szT;
+            last =  heap2.last;
+            if(lazyMelds == false){
+                SuccessiveLinking();
+            }
+            return;
+        }
+       
         szT += heap2.szT;
         sz += heap2.sz;
         this.last.next = heap2.start;  
         heap2.start.prev = this.last;  
         this.last = heap2.last;
+        HeapItem a = this.min;
+        HeapItem b = heap2.min;
+        if (a.key > b.key){
+            this.min = b;
+        }
         if(lazyMelds == false){
             SuccessiveLinking();
         }
