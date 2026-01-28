@@ -54,11 +54,16 @@ public class Heap
             a=b;
             b =c;
         } 
-        a.rank = a.rank+1;
-        b.next  = a.child;
         b.prev = null;
-        a.child = b;
+        b.next  = a.child;
         b.parent = a;
+        a.rank = a.rank+1;
+        if(a.child != null){
+            a.child.prev = b;
+        }
+        a.child = b;
+        a.next = null;
+        a.prev = null;
         return a;
     }
     /**
@@ -69,18 +74,31 @@ public class Heap
     public void SuccessiveLinking(){
         int maxrank = 2*(int)Math.log(sz) +10;
         HeapNode[] split =  new HeapNode[maxrank];
+        /* makes list of copy of heads without connection to each other */
+        HeapNode[] heads = new HeapNode[szT+1];
         HeapNode now = start;
+        int ihead =0;
         while(now != null){
+            heads[ihead++] = now.copy();
+            heads[ihead-1].prev = null;
+            heads[ihead-1].next = null;
+            now =  now.next;
+        }
+        /*doing acual succsive linking by Linking - we use copy all the time */
+        ihead = 0;
+        while(heads[ihead] != null){
+            now = heads[ihead];
             int i = now.rank;
-            HeapNode nowgo =  now;
+            HeapNode nowgo =  now.copy();
             while(split[i] != null){
-                nowgo = Link(split[i],nowgo);
+                nowgo = Link(split[i].copy(),nowgo);
                 split[i] =  null;
                 i++;
             }
             split[i] = nowgo;
-            now = now.next;
+            ihead++;
         }
+        /* making the heap */
         HeapNode lastHeapnode = null;
         szT=0;
         HeapItem a = new HeapItem(Integer.MAX_VALUE, null);
@@ -88,6 +106,7 @@ public class Heap
             if(split[i] != null){
                 if(a.key > split[i].item.key){
                     a.key  = split[i].item.key;
+                    a.node = split[i];
                 }
                 szT++;
                 if(lastHeapnode  == null){
@@ -121,26 +140,61 @@ public class Heap
     {
         HeapNode minnode = min.node;
         HeapNode child =  minnode.child;
-        if(minnode.child != null){
-            minnode.child.parent  =  null;
-        }
-        if(minnode.next != null){
-            minnode.next.prev = minnode.prev;
-        }
-        if(minnode.prev != null){
-            minnode.prev.next = minnode.next;
-        }
-        HeapNode child2 = child;
-        while(child2 != null){
-            if(child2.next == null){
-                break;
+        if(child == null){
+            if(minnode.next != null){
+                minnode.next.prev = minnode.prev;
             }
-            child2 = child2.next;
+            if(minnode.prev != null){
+                minnode.prev.next = minnode.next;
+            }
         }
+        else{
+            HeapNode child2 = child;
+            while(child2 != null){
+                if(child2.next == null){
+                    break;
+                }
+                child2 = child2.next;
+                child2.parent  =null;
+                szT++;
+            }
+            if(minnode.next != null){
+                minnode.next.prev = child2;
+                child2.next = minnode.next;
+            }
+            if(minnode.prev != null){
+                minnode.prev.next = child;
+                child.prev = minnode.prev;
+            }
+            if(minnode.child != null){
+                minnode.child.parent  =  null;
+            }
+        }
+        if(last ==  minnode){
+            last = minnode.prev;
+            if(last == null){
+                last =  child;
+            }
+            if(last == null){
+                last = minnode.next;
+            }
+            while(last != null && last.next != null){
+                last = last.next;
+            }
+        }
+        if(start ==  minnode){
+            start = minnode.next;
+            if(start == null){
+                start =  child;
+            }
+            while(start != null && start.prev != null){
+                start = start.prev;
+            }
+        }
+        minnode.child  =  null;
+        minnode.next = null;
+        minnode.prev = null;
         sz -=1;
-        child.prev = this.last; 
-        this.last.next = child;
-        this.last = child2;
         SuccessiveLinking();
     }
 
@@ -192,7 +246,6 @@ public class Heap
             }
             return;
         }
-       
         szT += heap2.szT;
         sz += heap2.sz;
         this.last.next = heap2.start;  
@@ -273,8 +326,46 @@ public class Heap
     {
         return 46; // should be replaced by student code
     }
-    
-    
+    public void printHeap() {
+        System.out.println("=== Fibonacci Heap Tree View ===");
+        if (start == null) {
+            System.out.println("Empty Heap");
+            return;
+        }
+
+        HeapNode currentRoot = start;
+        int treeCount = 1;
+        while (currentRoot != null) {
+            System.out.println("Tree #" + treeCount + " (Rank: " + currentRoot.rank + ")");
+            // Pass " " as the initial prefix for the root
+            displayTree(currentRoot, "", true);
+            currentRoot = currentRoot.next;
+            treeCount++;
+        }
+    }
+
+    private void displayTree(HeapNode node, String prefix, boolean isLast) {
+        if (node == null) return;
+
+        // Determine the branch visual
+        System.out.print(prefix);
+        System.out.print(isLast ? "└── " : "├── ");
+        System.out.println("Key: " + node.item.key);
+
+        // Prepare prefix for children
+        String newPrefix = prefix + (isLast ? "    " : "│   ");
+
+        // Print all children by traversing the child's .next chain
+        if (node.child != null) {
+            HeapNode currentChild = node.child;
+            while (currentChild != null) {
+                // A child is the "last" sibling if its .next is null
+                boolean childIsLast = (currentChild.next == null);
+                displayTree(currentChild, newPrefix, childIsLast);
+                currentChild = currentChild.next;
+            }
+        }
+    }
     /**
      * Class implementing a node in a Heap.
      *  
@@ -294,6 +385,16 @@ public class Heap
             this.parent = parent;
             this.rank = rank;
             this.item.node = this;
+        }
+        /*
+            return a copy of a HeapNode;
+        */
+        public HeapNode copy(){
+            HeapNode nodenew =  new HeapNode(this.item,this.child,this.prev,this.next,this.parent,this.rank);
+            if(nodenew.item != null){
+                nodenew.item.node = nodenew;
+            }
+            return nodenew;
         }
     }
     
