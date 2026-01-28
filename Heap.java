@@ -150,6 +150,7 @@ public class Heap
         }
         else{
             HeapNode child2 = child;
+            child.parent = null;
             while(child2 != null){
                 if(child2.next == null){
                     break;
@@ -207,7 +208,59 @@ public class Heap
      */
     public void decreaseKey(HeapItem x, int diff) 
     {    
-        return; // should be replaced by student code
+        x.key -= diff;
+        HeapNode nodex = x.node;
+        if(nodex.parent == null){
+            return;
+        }
+        else if(nodex.parent.item.key <= x.key){
+            return;
+        }
+        if(lazyDecreaseKeys){
+            while(nodex.marked){
+                if(nodex.parent == null){
+                    break;
+                }
+                nodex.marked = false;
+                if(nodex.prev != null){
+                    nodex.prev.next = nodex.next;
+                }
+                if(nodex.next != null){
+                    nodex.next.prev = nodex.prev;
+                }
+                HeapNode par = nodex.parent;
+                par.rank--;
+                if(par.child == nodex){
+                    par.child = nodex.next;
+                }
+                nodex.parent = null;
+                nodex.prev = null;
+                nodex.next =null;
+                nodex.marked = false;
+                Heap heap1 = new Heap(lazyMelds, lazyDecreaseKeys);
+                heap1.last = nodex;
+                heap1.start = nodex;
+                heap1.min = nodex.item;
+                heap1.sz = 0;
+                heap1.szT =1;
+                this.meld(heap1);
+                nodex = par;
+            }
+            nodex.marked = true;
+            nodex.rank--;
+        }
+        else{
+            while(nodex.parent != null  && nodex.parent.item.key > nodex.item.key){
+                int keynodex = nodex.item.key;
+                String infonodex =nodex.item.info;
+                nodex.item.key = nodex.parent.item.key;
+                nodex.item.info = nodex.parent.item.info;
+                nodex.parent.item.key = keynodex;
+                nodex.parent.item.info = infonodex;
+                nodex = nodex.parent;
+            }
+        }
+      
     }
 
     /**
@@ -377,6 +430,7 @@ public class Heap
         public HeapNode prev;
         public HeapNode parent;
         public int rank;
+        public boolean marked;
         public HeapNode(HeapItem item,HeapNode child,HeapNode next,HeapNode prev,HeapNode parent,int rank){
             this.item = item;
             this.child = child;
@@ -385,14 +439,17 @@ public class Heap
             this.parent = parent;
             this.rank = rank;
             this.item.node = this;
+            marked = false;
         }
         /*
             return a copy of a HeapNode;
         */
         public HeapNode copy(){
             HeapNode nodenew =  new HeapNode(this.item,this.child,this.prev,this.next,this.parent,this.rank);
+            nodenew.marked = this.marked;
             if(nodenew.item != null){
                 nodenew.item.node = nodenew;
+                nodenew.item.check =1;
             }
             return nodenew;
         }
@@ -406,6 +463,7 @@ public class Heap
         public HeapNode node;
         public int key;
         public String info;
+        public int check;
         public HeapItem(int key,String info){
             this.key = key;
             this.info = info;
