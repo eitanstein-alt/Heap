@@ -40,9 +40,6 @@ public class Heap
      */
 
     public HeapItem insert(int key, String info) { //with lazyMelds: O(1) W.C. without: O(log(n)) W.C.
-        if(key <= 0){
-            throw new IllegalArgumentException("Key must be positive");
-        }
         Heap heap2 = new Heap(lazyMelds, lazyDecreaseKeys);
         HeapItem start2item = new HeapItem(key,info);
         HeapNode start2 =  new HeapNode(start2item , null, null, null, null, 0);
@@ -86,7 +83,6 @@ public class Heap
     public void SuccessiveLinking(){ //O(n) W.C
         int maxrank = (int)(1.5*Math.log(sz+1) / Math.log(2)) + 5;
         HeapNode[] split =  new HeapNode[maxrank];
-        /* makes list of copy of heads without connection to each other */
         HeapNode[] heads = new HeapNode[szT+1];
         HeapNode now = start;
         HeapNode nextNode;
@@ -98,7 +94,7 @@ public class Heap
             heads[ihead-1].next = null;
             now = nextNode;
         }
-        /* Perform the actual successive linking using the link operation; we use copies throughout. */      ihead = 0;
+        ihead = 0;
         while(heads[ihead] != null){
             now = heads[ihead];
             int i = now.rank;
@@ -302,7 +298,7 @@ public class Heap
      */
     public void delete(HeapItem x)
     {
-        decreaseKey(x,Integer.MAX_VALUE);
+        decreaseKey(x,1+x.key);
         deleteMin();
     }
 
