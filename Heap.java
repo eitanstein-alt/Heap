@@ -74,9 +74,8 @@ public class Heap
             a.child.prev = b;
         }
         a.child = b;
-        a.next = null;
-        a.prev = null;
-        totalLinks ++;
+        totalLinks++;
+
         return a;
     }
     /**
@@ -85,25 +84,27 @@ public class Heap
      *
      */
     public void SuccessiveLinking(){ //O(n) W.C
-        int maxrank = 2*(int)Math.log(sz) +10;
+        int maxrank = (int)(1.5*Math.log(sz+1) / Math.log(2)) + 5;
         HeapNode[] split =  new HeapNode[maxrank];
         /* makes list of copy of heads without connection to each other */
         HeapNode[] heads = new HeapNode[szT+1];
         HeapNode now = start;
+        HeapNode nextNode;
         int ihead =0;
         while(now != null){
-            heads[ihead++] = now.copy();
+            heads[ihead++] = now;
+            nextNode = now.next;
             heads[ihead-1].prev = null;
             heads[ihead-1].next = null;
-            now =  now.next;
+            now = nextNode;
         }
         /* Perform the actual successive linking using the link operation; we use copies throughout. */      ihead = 0;
         while(heads[ihead] != null){
             now = heads[ihead];
             int i = now.rank;
-            HeapNode nowgo =  now.copy();
+            HeapNode nowgo =  now;
             while(split[i] != null){
-                nowgo = Link(split[i].copy(),nowgo);
+                nowgo = Link(split[i],nowgo);
                 split[i] =  null;
                 i++;
             }
@@ -113,12 +114,17 @@ public class Heap
         /* making the heap */
         HeapNode lastHeapnode = null;
         szT=0;
-        HeapItem a = new HeapItem(Integer.MAX_VALUE, null);
+        HeapItem a = null;
+        int amin =  Integer.MAX_VALUE;
         for(int i=0;i<maxrank;i++){
             if(split[i] != null){
-                if(a.key > split[i].item.key){
-                    a.key  = split[i].item.key;
-                    a.node = split[i];
+                if (split[i].marked) {
+                    split[i].marked = false;
+                    numMarkedNodes--;
+                }
+                if(amin > split[i].item.key){
+                    a = split[i].item;
+                    amin = a.key;
                 }
                 szT++;
                 if(lastHeapnode  == null){
@@ -136,7 +142,7 @@ public class Heap
             }
         }
         last = lastHeapnode;
-        min = a;
+        min = (szT == 0 ? null : a);
     }
     public HeapItem findMin() //O(1) W.C
     {
@@ -155,6 +161,7 @@ public class Heap
     {
         HeapNode minnode = min.node;
         HeapNode child =  minnode.child;
+        szT--;
         if(child == null){
             if(minnode.next != null){
                 minnode.next.prev = minnode.prev;
@@ -166,6 +173,7 @@ public class Heap
         else{
             HeapNode child2 = child;
             child.parent = null;
+            szT++;
             while(child2.next != null){
                 child2 = child2.next;
                 child2.parent  =null;
@@ -232,19 +240,26 @@ public class Heap
         heap1.last = node;
         heap1.start = node;
         heap1.min = node.item;
-        heap1.sz = 0;
+        heap1.sz = 1;
         heap1.szT = 1;
         heap1.totalLinks = 0;
         heap1.totalCuts = 0;
         heap1.totalHeapifyCosts = 0;
         heap1.numMarkedNodes = 0;
         this.meld(heap1);
+        this.sz-=1;
+        if (this.min == null || node.item.key < this.min.key) {
+            this.min = node.item;
+        }
         totalCuts++;
     }
     public void decreaseKey(HeapItem x, int diff)
     {
         x.key -= diff;
         HeapNode node = x.node;
+        if (this.min == null || node.item.key < this.min.key) {
+            this.min = node.item;
+        }
         if(node.parent == null){
             return;
         }
