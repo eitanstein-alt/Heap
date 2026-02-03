@@ -140,6 +140,9 @@ public class Heap
     }
     public HeapItem findMin() //O(1) W.C
     {
+        if(sz == 0){
+            return null;
+        }
         return min;
     }
 
@@ -273,8 +276,8 @@ public class Heap
                 totalHeapifyCosts++;
             }
         }
-        if(x.key < min.key){
-            min = x;
+        if(node.item.key < min.key){
+            min = node.item;
         }
     }
     /**
