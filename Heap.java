@@ -495,6 +495,7 @@ public class Heap
      * Class implementing an item in a Heap.
      *
      */
+    
     public static class HeapItem{
         public HeapNode node;
         public int key;
