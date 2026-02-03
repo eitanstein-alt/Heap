@@ -1,10 +1,3 @@
-/**
- * Heap
- * An implementation of Fibonacci heap over positive integers
- * with the possibility of not performing lazy melds and
- * the possibility of not performing lazy decrease keys.
- *
- */
 public class Heap
 {
     public final boolean lazyMelds;
@@ -40,9 +33,6 @@ public class Heap
      */
 
     public HeapItem insert(int key, String info) { //with lazyMelds: O(1) W.C. without: O(log(n)) W.C.
-        if(key <= 0){
-            throw new IllegalArgumentException("Key must be positive");
-        }
         Heap heap2 = new Heap(lazyMelds, lazyDecreaseKeys);
         HeapItem start2item = new HeapItem(key,info);
         HeapNode start2 =  new HeapNode(start2item , null, null, null, null, 0);
@@ -59,8 +49,10 @@ public class Heap
         meld(heap2);
         return start2item;
     }
-
-    public HeapNode Link(HeapNode a,HeapNode b){ //O(1)
+    /**
+     * O(1)
+    */
+    public HeapNode Link(HeapNode a,HeapNode b){ 
         if(b.item.key < a.item.key){
             HeapNode c = a;
             a=b;
@@ -81,12 +73,12 @@ public class Heap
     /**
      *
      * Return the minimal HeapNode, null if empty.
-     *
+     *  O(N) 
+     *  
      */
-    public void SuccessiveLinking(){ //O(n) W.C
+    public void SuccessiveLinking(){ 
         int maxrank = (int)(1.5*Math.log(sz+1) / Math.log(2)) + 5;
         HeapNode[] split =  new HeapNode[maxrank];
-        /* makes list of copy of heads without connection to each other */
         HeapNode[] heads = new HeapNode[szT+1];
         HeapNode now = start;
         HeapNode nextNode;
@@ -98,7 +90,7 @@ public class Heap
             heads[ihead-1].next = null;
             now = nextNode;
         }
-        /* Perform the actual successive linking using the link operation; we use copies throughout. */      ihead = 0;
+        ihead = 0;
         while(heads[ihead] != null){
             now = heads[ihead];
             int i = now.rank;
@@ -144,6 +136,10 @@ public class Heap
         last = lastHeapnode;
         min = (szT == 0 ? null : a);
     }
+    /**
+     * O(1)
+     * 
+    */
     public HeapItem findMin() //O(1) W.C
     {
         if(sz == 0){
@@ -155,9 +151,10 @@ public class Heap
     /**
      *
      * Delete the minimal item.
-     *
+     * O(n)
+     * 
      */
-    public void deleteMin() //worst case O(n)
+    public void deleteMin() 
     {
         HeapNode minnode = min.node;
         HeapNode child =  minnode.child;
@@ -217,6 +214,10 @@ public class Heap
     }
 
     //help function for decreaseKey, cut the node in the cascading cuts process
+    /**
+     * 
+     * O(n)
+     */
     public void cut(HeapNode node) {
         HeapNode par = node.parent;
         par.rank--;
@@ -248,11 +249,13 @@ public class Heap
         heap1.numMarkedNodes = 0;
         this.meld(heap1);
         this.sz-=1;
-        if (this.min == null || node.item.key < this.min.key) {
-            this.min = node.item;
-        }
         totalCuts++;
     }
+    /**
+     * 
+     * O(n)
+     * 
+     */
     public void decreaseKey(HeapItem x, int diff)
     {
         x.key -= diff;
@@ -298,11 +301,12 @@ public class Heap
     /**
      *
      * Delete the x from the heap.
-     *
+     * O(n)
+     * 
      */
     public void delete(HeapItem x)
     {
-        decreaseKey(x,Integer.MAX_VALUE);
+        decreaseKey(x,1+x.key);
         deleteMin();
     }
 
@@ -311,7 +315,7 @@ public class Heap
      *
      * Meld the heap with heap2
      * pre: heap2.lazyMelds = this.lazyMelds AND heap2.lazyDecreaseKeys = this.lazyDecreaseKeys
-     *
+     * O(n)
      */
     public void meld(Heap heap2)
     {
@@ -362,7 +366,7 @@ public class Heap
     /**
      *
      * Return the number of elements in the heap
-     *
+     *O(1)
      */
     public int size()
     {
@@ -373,7 +377,7 @@ public class Heap
     /**
      *
      * Return the number of trees in the heap.
-     *
+     *O(1)
      */
     public int numTrees()
     {
@@ -384,7 +388,7 @@ public class Heap
     /**
      *
      * Return the number of marked nodes in the heap.
-     *
+     *O(1)
      */
     public int numMarkedNodes()
     {
@@ -395,7 +399,7 @@ public class Heap
     /**
      *
      * Return the total number of links.
-     *
+     *O(1)
      */
     public int totalLinks()
     {
@@ -406,7 +410,7 @@ public class Heap
     /**
      *
      * Return the total number of cuts.
-     *
+     *O(1)
      */
     public int totalCuts()
     {
@@ -417,7 +421,7 @@ public class Heap
     /**
      *
      * Return the total heapify costs.
-     *
+     *O(1)
      */
     public int totalHeapifyCosts()
     {
