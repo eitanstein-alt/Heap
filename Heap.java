@@ -485,17 +485,6 @@ public class Heap
             this.item.node = this;
             marked = false;
         }
-        /*
-            return a copy of a HeapNode;
-        */
-        public HeapNode copy(){
-            HeapNode nodenew =  new HeapNode(this.item,this.child,this.prev,this.next,this.parent,this.rank);
-            nodenew.marked = this.marked;
-            if(nodenew.item != null){
-                nodenew.item.node = nodenew;
-            }
-            return nodenew;
-        }
     }
 
     /**
