@@ -155,12 +155,13 @@ public class getinfo {
             }
             Heap h = new Heap(lazyMelds, lazyDecreaseKeys);
             for(int i =0;i<n;i++){
+                int costmost_j = 0;
                 int costbefore = SumOfLinksCutsHeapify(h);
                 Heap.HeapItem nodeitem = h.insert(lst.get(i),"");
                 int costafter = SumOfLinksCutsHeapify(h);
                 int costoperation = costafter - costbefore;
                 lstitems.set(nodeitem.key-1, nodeitem);
-                costmost =  Math.max(costmost,costoperation);
+                costmost_j =  Math.max(costmost_j,costoperation);
             }
             int costbefore = SumOfLinksCutsHeapify(h);
             h.deleteMin();
@@ -208,6 +209,7 @@ public class getinfo {
         System.out.println("HeavyOperation: " +  costmost);
     }
     public static void main(String[] args) {
-        third(false,true);
+        first(false,false);
+
     }
 }
