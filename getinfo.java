@@ -8,6 +8,7 @@ public class getinfo {
         return h.totalLinks() + h.totalCuts() + h.totalHeapifyCosts();
     }
     public static void first(boolean lazyMelds,boolean lazyDecreaseKeys){
+        System.out.println("first: ");
         double totalmilisecondtime =0;
         double minimal =0;
         double links =0;
@@ -15,8 +16,6 @@ public class getinfo {
         double heapify =0;
         double szt =0;
         double costmost =0;
-        System.out.println("lazyMelds :" +lazyMelds );
-        System.out.println("lazyDecreaseKeys :" +lazyDecreaseKeys +"\n");
         for(int j =0;j<20;j++){
             int cost =0;
             long startTime = System.nanoTime();
@@ -66,6 +65,7 @@ public class getinfo {
 
     }
     public static void second(boolean lazyMelds,boolean lazyDecreaseKeys){
+        System.out.println("second: ");
         double totalmilisecondtime =0;
         double minimal =0;
         double links =0;
@@ -73,8 +73,6 @@ public class getinfo {
         double heapify =0;
         double szt =0;
         double costmost =0;
-        System.out.println("lazyMelds :" +lazyMelds );
-        System.out.println("lazyDecreaseKeys :" +lazyDecreaseKeys +"\n");
         for(int j =0;j<20;j++){
             int cost =0;
             long startTime = System.nanoTime();
@@ -137,6 +135,7 @@ public class getinfo {
 
     }
     public static void third(boolean lazyMelds,boolean lazyDecreaseKeys){
+        System.out.println("third: ");
         double totalmilisecondtime =0;
         double minimal =0;
         double links =0;
@@ -144,8 +143,6 @@ public class getinfo {
         double heapify =0;
         double szt =0;
         double costmost =0;
-        System.out.println("lazyMelds :" +lazyMelds );
-        System.out.println("lazyDecreaseKeys :" +lazyDecreaseKeys +"\n");
         for(int j =0;j<20;j++){
             int cost =0;
             long startTime = System.nanoTime();
@@ -214,6 +211,21 @@ public class getinfo {
         System.out.println("HeavyOperation: " +  costmost);
     }
     public static void main(String[] args) {
+        System.out.println("fibo : ");
+        first(true,true);
         second(true,true);
+        third(true,true);
+        System.out.println("binocut : ");
+        first(false,true);
+        second(false,true);
+        third(false,true);
+        System.out.println("bino : ");
+        first(false,false);
+        second(false,false);
+        third(false,false);
+        System.out.println("lazybino : ");
+        first(true,false);
+        second(true,false);
+        third(true,false);
     }
 }
