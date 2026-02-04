@@ -110,10 +110,6 @@ public class Heap
         int amin =  Integer.MAX_VALUE;
         for(int i=0;i<maxrank;i++){
             if(split[i] != null){
-                if (split[i].marked) {
-                    split[i].marked = false;
-                    numMarkedNodes--;
-                }
                 if(amin > split[i].item.key){
                     a = split[i].item;
                     amin = a.key;
