@@ -320,7 +320,7 @@ public class Heap
      *
      * Delete the x from the heap.
      * fibo - O(n)
-     * binocut - O()
+     * binocut - O(n*log(n))
      * lazybino - O(n)
      * bino - O(log(n))
      */
