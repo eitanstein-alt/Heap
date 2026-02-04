@@ -450,46 +450,7 @@ public class Heap
     {
         return totalHeapifyCosts;// should be replaced by student code
     }
-    public void printHeap() {
-        System.out.println("=== Fibonacci Heap Tree View ===");
-        if (start == null) {
-            System.out.println("Empty Heap");
-            return;
-        }
-
-        HeapNode currentRoot = start;
-        int treeCount = 1;
-        while (currentRoot != null) {
-            System.out.println("Tree #" + treeCount + " (Rank: " + currentRoot.rank + ")");
-            // Pass " " as the initial prefix for the root
-            displayTree(currentRoot, "", true);
-            currentRoot = currentRoot.next;
-            treeCount++;
-        }
-    }
-
-    private void displayTree(HeapNode node, String prefix, boolean isLast) {
-        if (node == null) return;
-
-        // Determine the branch visual
-        System.out.print(prefix);
-        System.out.print(isLast ? "└── " : "├── ");
-        System.out.println("Key: " + node.item.key);
-
-        // Prepare prefix for children
-        String newPrefix = prefix + (isLast ? "    " : "│   ");
-
-        // Print all children by traversing the child's .next chain
-        if (node.child != null) {
-            HeapNode currentChild = node.child;
-            while (currentChild != null) {
-                // A child is the "last" sibling if its .next is null
-                boolean childIsLast = (currentChild.next == null);
-                displayTree(currentChild, newPrefix, childIsLast);
-                currentChild = currentChild.next;
-            }
-        }
-    }
+   
     /**
      * Class implementing a node in a Heap.
      *
