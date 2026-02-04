@@ -1,3 +1,9 @@
+/**
+ *  fibo - lazyMelds == true and lazyDecreaseKeys = true
+ *  binocut - lazyMelds == false and lazyDecreaseKeys = true
+ *  bino - lazyMelds == false and lazyDecreaseKeys = false
+ *  lazybino - lazyMelds == true and lazyDecreaseKeys = false
+ */
 public class Heap
 {
     public final boolean lazyMelds;
@@ -12,7 +18,7 @@ public class Heap
     public int totalCuts;
     public int totalHeapifyCosts;
 
-
+     
     /**
      *
      * Constructor to initialize an empty heap.
@@ -29,10 +35,13 @@ public class Heap
      *
      * pre: key > 0
      * Insert (key,info) into the heap and return the newly generated HeapNode.
-     *
+     * fibo - O(1)
+     * binocut - O(log(n))
+     * lazybino - O(1)
+     * bino - O(log(n))
      */
 
-    public HeapItem insert(int key, String info) { //with lazyMelds: O(1) W.C. without: O(log(n)) W.C.
+    public HeapItem insert(int key, String info) { 
         Heap heap2 = new Heap(lazyMelds, lazyDecreaseKeys);
         HeapItem start2item = new HeapItem(key,info);
         HeapNode start2 =  new HeapNode(start2item , null, null, null, null, 0);
@@ -73,11 +82,13 @@ public class Heap
     /**
      *
      * Return the minimal HeapNode, null if empty.
-     *  O(N) 
-     *  
+     * fibo - O(n)
+     * binocut - O(log(n))
+     * lazybino - O(n)
+     * bino - O(log(n))
      */
     public void SuccessiveLinking(){ 
-        int maxrank = (int)(1.5*Math.log(sz+1) / Math.log(2)) + 5;
+        int maxrank = (int)(5*Math.log(sz+1) / Math.log(2)) + 5;
         HeapNode[] split =  new HeapNode[maxrank];
         HeapNode[] heads = new HeapNode[szT+1];
         HeapNode now = start;
@@ -91,7 +102,7 @@ public class Heap
             now = nextNode;
         }
         ihead = 0;
-        while(heads[ihead] != null){
+        while(ihead  < heads.length && heads[ihead] != null){
             now = heads[ihead];
             int i = now.rank;
             HeapNode nowgo =  now;
@@ -147,8 +158,10 @@ public class Heap
     /**
      *
      * Delete the minimal item.
-     * O(n)
-     * 
+     * fibo - O(n)
+     * binocut - O(log(n))
+     * lazybino - O(n)
+     * bino - O(log(n))
      */
     public void deleteMin() 
     {
@@ -212,7 +225,8 @@ public class Heap
     //help function for decreaseKey, cut the node in the cascading cuts process
     /**
      * 
-     * O(n)
+     * fibo - O(1)
+     * binocut - O(log(n))
      */
     public void cut(HeapNode node) {
         HeapNode par = node.parent;
@@ -249,7 +263,10 @@ public class Heap
     }
     /**
      * 
-     * O(n)
+     * fibo - O(n)
+     * binocut - O(n)
+     * lazybino - O(log(n))
+     * bino - O(log(n))
      * 
      */
     public void decreaseKey(HeapItem x, int diff)
@@ -282,10 +299,11 @@ public class Heap
             while(node.parent != null  && node.parent.item.key > node.item.key){
                 int keynode = node.item.key;
                 String infonode =node.item.info;
-                node.item.key = node.parent.item.key;
-                node.item.info = node.parent.item.info;
-                node.parent.item.key = keynode;
-                node.parent.item.info = infonode;
+                HeapItem itemnode = node.item;
+                node.item = node.parent.item;
+                node.item.node = node;
+                node.parent.item = itemnode;
+                node.parent.item.node = node.parent;
                 node = node.parent;
                 totalHeapifyCosts++;
             }
@@ -297,8 +315,10 @@ public class Heap
     /**
      *
      * Delete the x from the heap.
-     * O(n)
-     * 
+     * fibo - O(n)
+     * binocut - O()
+     * lazybino - O(n)
+     * bino - O(log(n))
      */
     public void delete(HeapItem x)
     {
@@ -311,7 +331,10 @@ public class Heap
      *
      * Meld the heap with heap2
      * pre: heap2.lazyMelds = this.lazyMelds AND heap2.lazyDecreaseKeys = this.lazyDecreaseKeys
-     * O(n)
+     * fibo - O(1)
+     * binocut - O(log(n))
+     * lazybino - O(1)
+     * bino - O(log(n))
      */
     public void meld(Heap heap2)
     {
