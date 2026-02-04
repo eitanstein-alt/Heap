@@ -268,7 +268,7 @@ public class Heap
     /**
      * 
      * fibo - O(n)
-     * binocut - O(n)
+     * binocut - O(n * log(n))
      * lazybino - O(log(n))
      * bino - O(log(n))
      * 
