@@ -18,6 +18,7 @@ public class getinfo {
         System.out.println("lazyMelds :" +lazyMelds );
         System.out.println("lazyDecreaseKeys :" +lazyDecreaseKeys +"\n");
         for(int j =0;j<20;j++){
+            int cost =0;
             long startTime = System.nanoTime();
             List<Integer> lst = new ArrayList<>();
             for(int i =1;i<=n;i++){
@@ -30,13 +31,13 @@ public class getinfo {
                 h.insert(lst.get(i),"");
                 int costafter = SumOfLinksCutsHeapify(h);
                 int costoperation = costafter - costbefore;
-                costmost =  Math.max(costmost,costoperation);
+                cost =  Math.max(cost,costoperation);
             }
             int costbefore = SumOfLinksCutsHeapify(h);
             h.deleteMin();
             int costafter = SumOfLinksCutsHeapify(h);
             int costoperation = costafter - costbefore;
-            costmost =  Math.max(costmost,costoperation);
+            cost =  Math.max(cost,costoperation);
             long endTime = System.nanoTime();
             long durationInNano = (endTime - startTime);
             long durationInMillis = durationInNano / 1_000_000;
@@ -46,6 +47,7 @@ public class getinfo {
             cuts += h.totalCuts();
             heapify += h.totalHeapifyCosts();
             szt += h.numTrees();
+            costmost += cost;
         }    
         totalmilisecondtime/=20;
         minimal/=20;
@@ -74,6 +76,7 @@ public class getinfo {
         System.out.println("lazyMelds :" +lazyMelds );
         System.out.println("lazyDecreaseKeys :" +lazyDecreaseKeys +"\n");
         for(int j =0;j<20;j++){
+            int cost =0;
             long startTime = System.nanoTime();
             List<Integer> lst = new ArrayList<>();
             for(int i =1;i<=n;i++){
@@ -91,19 +94,19 @@ public class getinfo {
                 int costafter = SumOfLinksCutsHeapify(h);
                 int costoperation = costafter - costbefore;
                 lstitems.set(nodeitem.key-1, nodeitem);
-                costmost =  Math.max(costmost,costoperation);
+                cost =  Math.max(cost,costoperation);
             }
             int costbefore = SumOfLinksCutsHeapify(h);
             h.deleteMin();
             int costafter = SumOfLinksCutsHeapify(h);
             int costoperation = costafter - costbefore;
-            costmost =  Math.max(costmost,costoperation);
+            cost =  Math.max(cost,costoperation);
             while(h.size() > 46){
                 costbefore = SumOfLinksCutsHeapify(h);
                 h.delete(lstitems.get(lstitems.size()-1));
                 costafter = SumOfLinksCutsHeapify(h);
                 costoperation = costafter - costbefore;
-                costmost =  Math.max(costmost,costoperation);
+                cost =  Math.max(cost,costoperation);
                 lstitems.remove(lstitems.size()-1);
             }
             long endTime = System.nanoTime();
@@ -115,6 +118,7 @@ public class getinfo {
             cuts += h.totalCuts();
             heapify += h.totalHeapifyCosts();
             szt += h.numTrees();
+            costmost +=cost;
         }    
         totalmilisecondtime/=20;
         minimal/=20;
@@ -143,6 +147,7 @@ public class getinfo {
         System.out.println("lazyMelds :" +lazyMelds );
         System.out.println("lazyDecreaseKeys :" +lazyDecreaseKeys +"\n");
         for(int j =0;j<20;j++){
+            int cost =0;
             long startTime = System.nanoTime();
             List<Integer> lst = new ArrayList<>();
             for(int i =1;i<=n;i++){
@@ -155,19 +160,18 @@ public class getinfo {
             }
             Heap h = new Heap(lazyMelds, lazyDecreaseKeys);
             for(int i =0;i<n;i++){
-                int costmost_j = 0;
                 int costbefore = SumOfLinksCutsHeapify(h);
                 Heap.HeapItem nodeitem = h.insert(lst.get(i),"");
                 int costafter = SumOfLinksCutsHeapify(h);
                 int costoperation = costafter - costbefore;
                 lstitems.set(nodeitem.key-1, nodeitem);
-                costmost_j =  Math.max(costmost_j,costoperation);
+                cost =  Math.max(cost,costoperation);
             }
             int costbefore = SumOfLinksCutsHeapify(h);
             h.deleteMin();
             int costafter = SumOfLinksCutsHeapify(h);
             int costoperation = costafter - costbefore;
-            costmost =  Math.max(costmost,costoperation);
+            cost =  Math.max(cost,costoperation);
             int n0_1 = n/10;
             n0_1 +=1;
             for(int i =0;i<n0_1;i++){
@@ -175,14 +179,14 @@ public class getinfo {
                 h.decreaseKey(lstitems.get(lstitems.size()-1),lstitems.get(lstitems.size()-1).key);
                 costafter = SumOfLinksCutsHeapify(h);
                 costoperation = costafter - costbefore;
-                costmost =  Math.max(costmost,costoperation);
+                cost =  Math.max(cost,costoperation);
                 lstitems.remove(lstitems.size()-1);
             }
             costbefore = SumOfLinksCutsHeapify(h);
             h.deleteMin();
             costafter = SumOfLinksCutsHeapify(h);
             costoperation = costafter - costbefore;
-            costmost =  Math.max(costmost,costoperation);
+            cost =  Math.max(cost,costoperation);
             long endTime = System.nanoTime();
             long durationInNano = (endTime - startTime);
             long durationInMillis = durationInNano / 1_000_000;
@@ -192,6 +196,7 @@ public class getinfo {
             cuts += h.totalCuts();
             heapify += h.totalHeapifyCosts();
             szt += h.numTrees();
+            costmost += cost;
         }
         totalmilisecondtime/=20;
         minimal/=20;
@@ -209,7 +214,6 @@ public class getinfo {
         System.out.println("HeavyOperation: " +  costmost);
     }
     public static void main(String[] args) {
-        first(false,false);
-
+        second(true,true);
     }
 }
